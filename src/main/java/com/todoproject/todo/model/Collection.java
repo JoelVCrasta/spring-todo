@@ -27,6 +27,8 @@ public class Collection {
     @Column(nullable = false)
     private String collectionName;
 
+    private String collectionColor;
+
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Todo> todos;
