@@ -1,5 +1,6 @@
 package com.todoproject.todo.controller;
 
+import com.todoproject.todo.dto.CollectionDTO;
 import com.todoproject.todo.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,15 +22,15 @@ public class CollectionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Collection>> getAllCollections() {
-        List<Collection> collections = collectionService.getAllCollections();
+    public ResponseEntity<List<CollectionDTO>> getAll() {
+        List<CollectionDTO> collections = collectionService.findAllCollections().stream().map(CollectionDTO::fromEntity).toList();
         return ResponseEntity.ok(collections);
     }
 
     @PostMapping
-    public ResponseEntity<Collection> create(@RequestBody Collection collection) {
+    public ResponseEntity<CollectionDTO> create(@RequestBody Collection collection) {
         Collection newCollection = collectionService.createCollection(collection);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCollection);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CollectionDTO.fromEntity(newCollection));
     }
 
     @DeleteMapping("/{id}")

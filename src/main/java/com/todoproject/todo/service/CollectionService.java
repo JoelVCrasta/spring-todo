@@ -19,7 +19,7 @@ public class CollectionService {
     }
 
     public Collection createCollection(Collection collection) {
-        return collectionRepository.save(collection);
+        return collectionRepository.saveAndFlush(collection);
     }
 
     public void deleteCollectionById(UUID id) {
@@ -29,7 +29,7 @@ public class CollectionService {
         collectionRepository.deleteById(id);
     }
 
-    public List<Collection> getAllCollections() {
+    public List<Collection> findAllCollections() {
         return collectionRepository.findAll();
     }
 }
