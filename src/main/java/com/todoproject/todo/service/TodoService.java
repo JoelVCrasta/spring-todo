@@ -1,5 +1,6 @@
 package com.todoproject.todo.service;
 
+import com.todoproject.todo.dto.TodoRequest;
 import com.todoproject.todo.model.Todo;
 import com.todoproject.todo.model.Collection;
 import com.todoproject.todo.repository.CollectionRepository;
@@ -26,12 +27,27 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
-    public Todo createtodo(Todo todo, UUID collectionId) {
+    public Todo createTodo(Todo todo, UUID collectionId) {
         Collection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new EntityNotFoundException("Collection not found"));
 
         todo.setCollection(collection);
-        return todoRepository.save(todo);
+        return todoRepository.saveAndFlush(todo);
+    }
+
+    public Todo updateTodo(TodoRequest updatedTodo, UUID id) {
+        Todo existingTodo = todoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Todo not found"));
+
+        Collection collection = collectionRepository.findById(updatedTodo.collectionId())
+                .orElseThrow(() -> new EntityNotFoundException("Collection not found"));
+
+        existingTodo.setTitle(updatedTodo.title());
+        existingTodo.setDescription(updatedTodo.description());
+        existingTodo.setDueDate(updatedTodo.dueDate());
+        existingTodo.setCollection(collection);
+
+        return todoRepository.saveAndFlush(existingTodo);
     }
 
     public Todo toggleTodoCompletion(UUID id) {
@@ -39,7 +55,7 @@ public class TodoService {
                 .orElseThrow(() -> new EntityNotFoundException("Todo not found"));
 
         todo.setCompleted(!todo.getCompleted());
-        return todoRepository.save(todo);
+        return todoRepository.saveAndFlush(todo);
     }
 
     public List<Todo> getTodoByTitle(String title) {

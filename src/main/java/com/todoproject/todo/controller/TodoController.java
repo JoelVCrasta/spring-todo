@@ -1,5 +1,7 @@
 package com.todoproject.todo.controller;
 
+import com.todoproject.todo.dto.TodoDTO;
+import com.todoproject.todo.dto.TodoRequest;
 import com.todoproject.todo.model.Todo;
 import com.todoproject.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +35,28 @@ public class TodoController {
     }
 
     @PostMapping("/{collectionId}")
-    public ResponseEntity<Todo> createTodo(
+    public ResponseEntity<TodoDTO> create(
             @RequestBody Todo todo,
             @PathVariable UUID collectionId
     ) {
-        Todo newTodo = todoService.createtodo(todo, collectionId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newTodo);
+        Todo newTodo = todoService.createTodo(todo, collectionId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(TodoDTO.fromEntity(newTodo));
     }
 
     @PutMapping("/{id}/toggle")
-    public ResponseEntity<Todo> toggleCompleted(@PathVariable UUID id) {
+    public ResponseEntity<TodoDTO> toggleCompleted(@PathVariable UUID id) {
         Todo updatedTodo = todoService.toggleTodoCompletion(id);
-        return ResponseEntity.ok(updatedTodo);
+        return ResponseEntity.ok(TodoDTO.fromEntity(updatedTodo));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TodoDTO> update(@RequestBody TodoRequest todo, @PathVariable UUID id) {
+        Todo updatedTodo = todoService.upda576teTodo(todo, id);
+        return ResponseEntity.ok(TodoDTO.fromEntity((updatedTodo)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         todoService.deleteTodo(id);
         return ResponseEntity.noContent().build();
     }
